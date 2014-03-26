@@ -55,8 +55,9 @@ package
 					loader.removeEventListener(Event.COMPLETE, arguments.callee);
 					
 					var loaderInfo:LoaderInfo = LoaderInfo(e.target);
-					var bmpData:BitmapData = new BitmapData(loaderInfo.width, loaderInfo.height, false, 0xFFFFFF);
-					bmpData.draw(loaderInfo.loader);
+					//var bmpData:BitmapData = new BitmapData(loaderInfo.width, loaderInfo.height, false, 0xFFFFFF);
+					//bmpData.draw(loaderInfo.loader);
+					var bmpData: BitmapData =  (loaderInfo.content as Bitmap).bitmapData.clone();
 
 					imgInstance = new Bitmap(bmpData);
 					
