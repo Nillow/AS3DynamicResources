@@ -15,6 +15,9 @@ package
 	import flash.system.System;
 	import flash.utils.ByteArray;
 
+	import nillow.util.LocalBitmapLoader;
+	import nillow.util.LocalLoaderEvent;
+
 	/**
 	 * nillow
 	 * @author
@@ -41,33 +44,9 @@ package
 			if (!imgInstance)
 			{
 				var filePath:File = File.applicationDirectory.resolvePath("drop.png");
-				trace(filePath.exists);
-				
-				var stream:FileStream = new FileStream();
-				stream.open(filePath, FileMode.READ);
-
-				var ba:ByteArray = new ByteArray();
-				stream.readBytes(ba);
-				stream.close();
-				
-				var loader:Loader = new Loader();
-				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(e:Event):void{
-					loader.removeEventListener(Event.COMPLETE, arguments.callee);
-					
-					var loaderInfo:LoaderInfo = LoaderInfo(e.target);
-					//var bmpData:BitmapData = new BitmapData(loaderInfo.width, loaderInfo.height, false, 0xFFFFFF);
-					//bmpData.draw(loaderInfo.loader);
-					var bmpData: BitmapData =  (loaderInfo.content as Bitmap).bitmapData.clone();
-
-					imgInstance = new Bitmap(bmpData);
-					
-					addChild(imgInstance);
-//					addChild(new Bitmap(bmpData));
-					
-					ba = null;
-					System.gc();
-				});
-				loader.loadBytes(ba);												
+				var loader:LocalBitmapLoader = new LocalBitmapLoader();
+				loader.addEventListener(LocalLoaderEvent.COMPLETE, onBitmapComplete);
+				loader.load(filePath);										
 			}
 			else
 			{
@@ -76,6 +55,12 @@ package
 				imgInstance = null;
 				System.gc();
 			}
+		}
+
+		private function onBitmapComplete(event:LocalLoaderEvent):void
+		{
+			imgInstance = event.data as Bitmap;
+			addChild(imgInstance);
 		}
 
 	}
